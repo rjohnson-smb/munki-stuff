@@ -7,7 +7,7 @@
 		<key>created_by</key>
 		<string>russ</string>
 		<key>creation_date</key>
-		<date>2019-08-14T16:41:54Z</date>
+		<date>2019-10-01T16:41:54Z</date>
 		<key>munki_version</key>
 		<string>3.6.2.3776</string>
 		<key>os_version</key>
@@ -18,14 +18,13 @@
 	<key>catalogs</key>
 	<array>
 		<string>D7</string>
-		<string>CSC</string>
 	</array>
 	<key>category</key>
 	<string>Printers</string>
 	<key>developer</key>
 	<string>Printers</string>
 	<key>display_name</key>
-	<string>Konica Minolta Bizhub C659</string>
+	<string>Konica Minolta Bizhub C659 Single Sided</string>
 	<key>installcheck_script</key>
 	<string>#!/bin/sh
 
@@ -36,16 +35,16 @@
     # Make sure to install the required drivers first!
 
     # Variables. Edit these.
-    printername="km_c659"
+    printername="km_c659_ss"
     location="Copy Room"
-    gui_display_name="Konica Minolta Bizhub C659"
-    address="konicaprinter/km_c659"
+    gui_display_name="Konica Minolta Bizhub C659 Single Sided"
+    address="konicaprinter/km_c659_ss"
     driver_ppd="/Library/Printers/PPDs/Contents/Resources/KONICAMINOLTAC754e.gz"
     # Populate these options if you want to set specific options for the printer. E.g. duplexing installed, etc.
     option_1="PaperSources/Paper Source Unit:LU204"
     option_2="Finisher/Finisher:FS535"
     option_3="KMPunchUnit/Punch Unit:PK521-23"
-    currentVersion="0.4"
+    currentVersion="0.1"
 
     function exitWithStatus () {
     	if [ $1 -eq 0 ]; then
@@ -101,7 +100,7 @@
 	<key>minimum_os_version</key>
 	<string>10.4.0</string>
 	<key>name</key>
-	<string>km_c659</string>
+	<string>km_c659_ss</string>
 	<key>postinstall_script</key>
 	<string>#!/bin/sh
 
@@ -112,16 +111,16 @@
     # Make sure to install the required drivers first!
 
     # Variables. Edit these.
-    printername="km_c659"
+    printername="km_c659_ss"
     location="Copy Room"
     gui_display_name="Konica Minolta Bizhub C659"
-    address="konicaprinter/km_c659"
+    address="konicaprinter/km_c659_ss"
     driver_ppd="/Library/Printers/PPDs/Contents/Resources/KONICAMINOLTAC754e.gz"
     # Populate these options if you want to set specific options for the printer. E.g. duplexing installed, etc.
     option_1="PaperSources/Paper Source Unit:LU204"
     option_2="Finisher/Finisher:FS535"
     option_3="KMPunchUnit/Punch Unit:PK521-23"
-    currentVersion="0.4"
+    currentVersion="0.1"
     protocol="ipp"
 
     function exitWithStatus () {
@@ -161,8 +160,9 @@
     # Now we can install the printer.
     printf "Adding $printername... "
     #/usr/sbin/lpadmin         -p "$printername"         -L "$location"         -D "$gui_display_name"         -v "${protocol}"://"${address}"         -P "$driver_ppd"         -o sides=two-sided-long-edge          -o printer-is-shared=false         -o printer-error-policy=abort-job         -E
-	lpadmin -p km_c659 -D "Konica Minolta Bizhub C659" -v ipp://konicaprinter -L "Copy Room" -P /Library/Printers/PPDs/Contents/Resources/KONICAMINOLTAC754e.gz -o sides=two-sided-long-edge -o printer-is-shared=false -o printer-error-policy=abort-job -o PaperSources=LU204  -o Finisher=FS535 -o KMPunchUnit=PK521-23 -E
-
+	#lpadmin -p km_c659 -D "Konica Minolta Bizhub C659" -v ipp://konicaprinter -L "Copy Room" -P /Library/Printers/PPDs/Contents/Resources/KONICAMINOLTAC754e.gz -o sides=two-sided-long-edge -o printer-is-shared=false -o printer-error-policy=abort-job -o PaperSources=LU204  -o Finisher=FS535 -o KMPunchUnit=PK521-23 -E
+	#KMDuplex=Single
+	lpadmin -p km_c659_ss -D "Konica Minolta Bizhub C659" -v ipp://konicaprinter -L "Copy Room" -P /Library/Printers/PPDs/Contents/Resources/KONICAMINOLTAC754e.gz -o KMDuplex=Single -o printer-is-shared=false -o printer-error-policy=abort-job -o PaperSources=LU204  -o Finisher=FS535 -o KMPunchUnit=PK521-23 -E
 
     if [ $? -ne 0 ]; then
     	echo "Failed adding printer... Removing... "
@@ -211,7 +211,7 @@
 	<string>uninstall_script</string>
 	<key>uninstall_script</key>
 	<string>#!/bin/sh
-    printerName="km_c659"
+    printerName="km_c659_ss"
 
     printf "Removing $printername... "
     /usr/sbin/lpadmin -x $printerName
