@@ -37,14 +37,14 @@
     # Variables. Edit these.
     printername="km_c659_ss"
     location="Copy Room"
-    gui_display_name="Konica Minolta Bizhub C659 Single Sided"
+    gui_display_name="KM Bizhub C659 Single Sided"
     address="konicaprinter/km_c659_ss"
     driver_ppd="/Library/Printers/PPDs/Contents/Resources/KONICAMINOLTAC754e.gz"
     # Populate these options if you want to set specific options for the printer. E.g. duplexing installed, etc.
     option_1="PaperSources/Paper Source Unit:LU204"
     option_2="Finisher/Finisher:FS535"
     option_3="KMPunchUnit/Punch Unit:PK521-23"
-    currentVersion="0.1"
+    currentVersion="0.2"
 
     function exitWithStatus () {
     	if [ $1 -eq 0 ]; then
@@ -113,14 +113,14 @@
     # Variables. Edit these.
     printername="km_c659_ss"
     location="Copy Room"
-    gui_display_name="Konica Minolta Bizhub C659"
+    gui_display_name="KM Bizhub C659 Single Sided"
     address="konicaprinter/km_c659_ss"
     driver_ppd="/Library/Printers/PPDs/Contents/Resources/KONICAMINOLTAC754e.gz"
     # Populate these options if you want to set specific options for the printer. E.g. duplexing installed, etc.
     option_1="PaperSources/Paper Source Unit:LU204"
     option_2="Finisher/Finisher:FS535"
     option_3="KMPunchUnit/Punch Unit:PK521-23"
-    currentVersion="0.1"
+    currentVersion="0.2"
     protocol="ipp"
 
     function exitWithStatus () {
@@ -162,7 +162,7 @@
     #/usr/sbin/lpadmin         -p "$printername"         -L "$location"         -D "$gui_display_name"         -v "${protocol}"://"${address}"         -P "$driver_ppd"         -o sides=two-sided-long-edge          -o printer-is-shared=false         -o printer-error-policy=abort-job         -E
 	#lpadmin -p km_c659 -D "Konica Minolta Bizhub C659" -v ipp://konicaprinter -L "Copy Room" -P /Library/Printers/PPDs/Contents/Resources/KONICAMINOLTAC754e.gz -o sides=two-sided-long-edge -o printer-is-shared=false -o printer-error-policy=abort-job -o PaperSources=LU204  -o Finisher=FS535 -o KMPunchUnit=PK521-23 -E
 	#KMDuplex=Single
-	lpadmin -p km_c659_ss -D "Konica Minolta Bizhub C659" -v ipp://konicaprinter -L "Copy Room" -P /Library/Printers/PPDs/Contents/Resources/KONICAMINOLTAC754e.gz -o KMDuplex=Single -o printer-is-shared=false -o printer-error-policy=abort-job -o PaperSources=LU204  -o Finisher=FS535 -o KMPunchUnit=PK521-23 -E
+	lpadmin -p km_c659_ss -D "KM Bizhub C659 Single Sided" -v ipp://konicaprinter -L "Copy Room" -P /Library/Printers/PPDs/Contents/Resources/KONICAMINOLTAC754e.gz -o KMDuplex=Single -o printer-is-shared=false -o printer-error-policy=abort-job -o PaperSources=LU204  -o Finisher=FS535 -o KMPunchUnit=PK521-23 -E
 
     if [ $? -ne 0 ]; then
     	echo "Failed adding printer... Removing... "
