@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>_metadata</key>
+	<dict>
+		<key>created_by</key>
+		<string>russ</string>
+		<key>creation_date</key>
+		<date>2019-08-14T16:41:54Z</date>
+		<key>munki_version</key>
+		<string>3.6.2.3776</string>
+		<key>os_version</key>
+		<string>10.14.6</string>
+	</dict>
+	<key>autoremove</key>
+	<false/>
+	<key>catalogs</key>
+	<array>
+		<string>D7</string>
+		<string>CSC</string>
+	</array>
+	<key>category</key>
+	<string>Printers</string>
+	<key>developer</key>
+	<string>Printers</string>
+	<key>display_name</key>
+	<string>Konica Minolta Bizhub C659</string>
+	<key>installcheck_script</key>
+	<string>#!/bin/sh
+
+    # Based on 2010 Walter Meyer SUNY Purchase College (c)
+    # Modified by Nick McSpadden, 2013
+
+    # Script to install and setup printers on a Mac OS X system in a "Munki-Friendly" way.
+    # Make sure to install the required drivers first!
+
+    # Variables. Edit these.
+    printername="km_c659"
+    location="Copy Room"
+    gui_display_name="Konica Minolta Bizhub C659"
+    address="konicaprinter/km_c659"
+    driver_ppd="/Library/Printers/PPDs/Contents/Resources/KONICAMINOLTAC754e.gz"
+    # Populate these options if you want to set specific options for the printer. E.g. duplexing installed, etc.
+    option_1="PaperSources/Paper Source Unit:LU204"
+    option_2="Finisher/Finisher:FS535"
+    option_3="KMPunchUnit/Punch Unit:PK521-23"
+    currentVersion="0.4"
+
+    function exitWithStatus () {
+    	if [ $1 -eq 0 ]; then
+    		echo "INSTALL REQUIRED"
+    	else
+    		echo "NO INSTALL REQUIRED"
+    	fi
+    	echo "-------------------"
+    	echo ""
+    	exit $1
+    }
+
+    echo "--------------------------------"
+    echo "Checking $printername Printer... "
+    echo "--------------------------------"
+
+
+    ### Determine if receipt is installed ###
+    printf "Receipt: "
+    if [ -e "/private/etc/cups/deployment/receipts/$printername.plist" ]; then
+        storedVersion=$(/usr/libexec/PlistBuddy -c "Print :version" "/private/etc/cups/deployment/receipts/$printername.plist")
+        echo $storedVersion
+    else
+    	echo "not stored."
+        storedVersion="0"
+    fi
+
+    versionComparison=$(echo "$storedVersion &lt; $currentVersion" | bc -l)
+    # This will be 0 if the current receipt is greater than or equal to current version of the script
+
+    printf "State: "
+
+    ### Printer Install ###
+    # If the queue already exists (returns 0), we don't need to reinstall it.
+    LPSTATOUTPUT=$(/usr/bin/lpstat -p "$printername" 2&gt;&amp;1)
+    if [ $? -eq 0 ]; then
+        if [ "$versionComparison" -eq 0 ]; then
+            # We are at the current or greater version
+            echo "Configured."
+            exitWithStatus 1
+        fi
+        # We are of lesser version, and therefore we should delete the printer and reinstall.
+        echo "Configured, but receipt version $storedVersion doesn't match $currentVersion."
+        exitWithStatus 0
+    else
+    	# Not configured. For verbosity, say unconfigured and exit with status 0"
+    	echo "Unconfigured. $LPSTATOUTPUT"
+    	exitWithStatus 0
+    fi
+    </string>
+	<key>installer_type</key>
+	<string>nopkg</string>
+	<key>minimum_os_version</key>
+	<string>10.4.0</string>
+	<key>name</key>
+	<string>km_c659</string>
+	<key>postinstall_script</key>
+	<string>#!/bin/sh
+
+    # Based on 2010 Walter Meyer SUNY Purchase College (c)
+    # Modified by Nick McSpadden, 2013
+
+    # Script to install and setup printers on a Mac OS X system in a "Munki-Friendly" way.
+    # Make sure to install the required drivers first!
+
+    # Variables. Edit these.
+    printername="km_c659"
+    location="Copy Room"
+    gui_display_name="Konica Minolta Bizhub C659"
+    address="konicaprinter/km_c659"
+    driver_ppd="/Library/Printers/PPDs/Contents/Resources/KONICAMINOLTAC754e.gz"
+    # Populate these options if you want to set specific options for the printer. E.g. duplexing installed, etc.
+    option_1="PaperSources/Paper Source Unit:LU204"
+    option_2="Finisher/Finisher:FS535"
+    option_3="KMPunchUnit/Punch Unit:PK521-23"
+    currentVersion="0.4"
+    protocol="ipp"
+
+    function exitWithStatus () {
+    	if [ $1 -eq 0 ]; then
+    		echo "INSTALL SUCCESSFUL"
+    		echo
+    		exit 0
+    	fi
+    	echo "ERROR WITH INSTALL"
+    	echo
+    	exit 1
+    }
+
+    ### Determine if receipt is installed ###
+    if [ -e "/private/etc/cups/deployment/receipts/$printername.plist" ]; then
+        storedVersion=$(/usr/libexec/PlistBuddy -c "Print :version" "/private/etc/cups/deployment/receipts/$printername.plist")
+    else
+        storedVersion="0"
+    fi
+
+    versionComparison=$(echo "$storedVersion &lt; $currentVersion" | bc -l)
+    # This will be 0 if the current receipt is greater than or equal to current version of the script
+
+    ### Printer Install ###
+    # If the queue already exists (returns 0), we don't need to reinstall it.
+    LPSTATOUTPUT=$(/usr/bin/lpstat -p "$printername" 2&gt;&amp;1)
+    if [ $? -eq 0 ]; then
+        if [ "$versionComparison" -eq 0 ]; then
+            # We are at the current or greater version
+            exitWithStatus 0
+        fi
+        # We are of lesser version, and therefore we should delete the printer and reinstall.
+        printf "Newer install (${currentVersion})... removing existing printer ($printername)... "
+        /usr/sbin/lpadmin -x "$printername"
+    fi
+
+    # Now we can install the printer.
+    printf "Adding $printername... "
+    #/usr/sbin/lpadmin         -p "$printername"         -L "$location"         -D "$gui_display_name"         -v "${protocol}"://"${address}"         -P "$driver_ppd"         -o sides=two-sided-long-edge          -o printer-is-shared=false         -o printer-error-policy=abort-job         -E
+	lpadmin -p km_c659 -D "Konica Minolta Bizhub C659" -v ipp://konicaprinter -L "Copy Room" -P /Library/Printers/PPDs/Contents/Resources/KONICAMINOLTAC754e.gz -o sides=two-sided-long-edge -o printer-is-shared=false -o printer-error-policy=abort-job -o PaperSources=LU204  -o Finisher=FS535 -o KMPunchUnit=PK521-23 -E
+
+
+    if [ $? -ne 0 ]; then
+    	echo "Failed adding printer... Removing... "
+    	/usr/sbin/lpadmin -x "$printername"
+    	exitWithStatus 1
+    fi
+
+    # Get list of configured printers
+    CONFIGUREDPRINTERS=$(lpstat -p | grep -w "printer" | awk '{print$2}' | tr '
+' ' ')
+
+    # Check if configured.
+    if [ $(echo "$CONFIGUREDPRINTERS" | grep -w "$printername" | wc -l | tr -d ' ') -eq 0 ]; then
+    	echo "ERROR"
+    	echo "$printername not in lpstat list after being configured. Currently configured printers are: $CONFIGUREDPRINTERS"
+    	exitWithStatus 1
+    fi
+
+    # Enable and start the printers on the system (after adding the printer initially it is paused).
+    printf "Enabling... "
+    /usr/sbin/cupsenable $CONFIGUREDPRINTERS
+
+    # Create a receipt for the printer
+    printf "Creating v${currentVersion} receipt... "
+    mkdir -p /private/etc/cups/deployment/receipts
+    PLISTBUDDYOUTPUT=$(/usr/libexec/PlistBuddy -c "Add :version string" "/private/etc/cups/deployment/receipts/$printername.plist" 2&gt;&amp;1)
+    PLISTBUDDYOUTPUT+=$(/usr/libexec/PlistBuddy -c "Set :version $currentVersion" "/private/etc/cups/deployment/receipts/$printername.plist" 2&gt;&amp;1)
+
+    # If problem setting version in receipt (above command), we tell user
+    if [ $? -ne 0 ]; then
+    	echo "ERROR with receipt creation: $PLISTBUDDYOUTPUT"
+    fi
+
+    # Permission the directories properly.
+    chown -R root:_lp /private/etc/cups/deployment
+    chmod -R 700 /private/etc/cups/deployment
+
+    echo "Complete!"
+    echo "Current printers: $CONFIGUREDPRINTERS"
+
+    exitWithStatus 0
+        </string>
+	<key>unattended_install</key>
+	<true/>
+	<key>uninstall_method</key>
+	<string>uninstall_script</string>
+	<key>uninstall_script</key>
+	<string>#!/bin/sh
+    printerName="km_c659"
+
+    printf "Removing $printername... "
+    /usr/sbin/lpadmin -x $printerName
+
+    printf "Removing receipt... "
+    rm -f /private/etc/cups/deployment/receipts/$printerName.plist
+
+    echo "Uninstall complete."
+        </string>
+	<key>uninstallable</key>
+	<true/>
+	<key>version</key>
+	<string>0.4</string>
+</dict>
+</plist>
