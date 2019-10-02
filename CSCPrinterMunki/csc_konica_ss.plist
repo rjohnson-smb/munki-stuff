@@ -162,7 +162,7 @@
     #/usr/sbin/lpadmin         -p "$printername"         -L "$location"         -D "$gui_display_name"         -v "${protocol}"://"${address}"         -P "$driver_ppd"         -o sides=two-sided-long-edge          -o printer-is-shared=false         -o printer-error-policy=abort-job         -E
 	#lpadmin -p km_c659 -D "Konica Minolta Bizhub C659" -v ipp://konicaprinter -L "Copy Room" -P /Library/Printers/PPDs/Contents/Resources/KONICAMINOLTAC754e.gz -o sides=two-sided-long-edge -o printer-is-shared=false -o printer-error-policy=abort-job -o PaperSources=LU204  -o Finisher=FS535 -o KMPunchUnit=PK521-23 -E
 	#KMDuplex=Single
-	lpadmin -p km_c659_ss -D "KM Bizhub C659 Single Sided" -v ipp://konicaprinter -L "Copy Room" -P /Library/Printers/PPDs/Contents/Resources/KONICAMINOLTAC754e.gz -o KMDuplex=Single -o printer-is-shared=false -o printer-error-policy=abort-job -o PaperSources=LU204  -o Finisher=FS535 -o KMPunchUnit=PK521-23 -E
+	lpadmin -p km_c659_ss -D "KM Bizhub C659 Single Sided" -v ipp://konicaprinter -L "Copy Room" -P /Library/Printers/PPDs/Contents/Resources/KONICAMINOLTAC754e.gz -o sides=one-sided -o printer-is-shared=false -o printer-error-policy=abort-job -o PaperSources=LU204  -o Finisher=FS535 -o KMPunchUnit=PK521-23 -E
 
     if [ $? -ne 0 ]; then
     	echo "Failed adding printer... Removing... "
